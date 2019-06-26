@@ -6,11 +6,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
     <PackageReference Include="MassTransit.AspNetCore" Version="5.5.1" />
+    <PackageReference Include="MassTransit.Autofac" Version="5.5.2" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="5.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Events">
+      <HintPath>..\..\..\github\ASPNETCoreDockerMicroservices\Foundation\Events\bin\Debug\netcoreapp2.0\Events.dll</HintPath>
+    </Reference>
+    <Reference Include="my8.ShareObject.ESB">
+      <HintPath>..\..\my8.ShareObject\my8.ShareObject\bin\Debug\netcoreapp2.0\my8.ShareObject.ESB.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
