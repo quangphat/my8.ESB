@@ -11,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using my8.ESB.Handler;
+using my8.ESB.IRepository;
+using my8.ESB.Models;
+using my8.ESB.Repository;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -78,11 +81,13 @@ namespace my8.ESB
         //}
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddMvc();
+            services.Configure<MongoConnection>(Configuration.GetSection("MongoConnection"));
             services.Configure<BusConfig>(Configuration.GetSection("Bus"));
 
+            services.AddSingleton<IRecommendedTagRepository, RecommendedTagRepository>();
             services.AddScoped<CommentHandler>();
             services.AddScoped<JobHandler>();
+            services.AddScoped<RecommendedTagHandler>();
             services.AddSingleton<IBusControl>(u =>
             {
                 var config = u.GetService<IOptions<BusConfig>>().Value;
@@ -109,6 +114,10 @@ namespace my8.ESB
                     break;
                 case "job_queue":
                     handler.Consumer<JobHandler>(provider);
+                    //EndpointConvention.Map<DoSomething>(handler.InputAddress);
+                    break;
+                case "recommendedtag_queue":
+                    handler.Consumer<RecommendedTagHandler>(provider);
                     //EndpointConvention.Map<DoSomething>(handler.InputAddress);
                     break;
                 default:
