@@ -17,12 +17,12 @@ namespace my8.ESB.Handler
         }
         public async Task Consume(ConsumeContext<RecommendedTagMsg> context)
         {
-            await HandleUpdateTagUsedCount(context.Message.Tag);
+            if (context.Message.Tags == null)
+                return;
+            await HandleUpdateTagUsedCount(context.Message.Tags);
         }
         private async Task HandleUpdateTagUsedCount(List<string> tags)
         {
-            if (tags == null)
-                return;
             await _rpRecommendedTag.UpdateCountUsed(tags.ToArray(), 1);
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using my8.ESB.Infrastructures;
 using my8.ESB.IRepository;
 using my8.ESB.Models;
 using System;
@@ -22,7 +23,7 @@ namespace my8.ESB.Repository
         {
             var filter = Builders<RecommendedTag>.Filter.Eq(p => p.Id, tagId);
             var update = Builders<RecommendedTag>.Update
-                            .Set(s => s.CountUsed, value);
+                            .Inc(s => s.CountUsed, value);
             await collection.UpdateOneAsync(filter, update);
             return true;
         }

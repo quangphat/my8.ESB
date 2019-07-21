@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace my8.ESB
+namespace my8.ESB.Infrastructures
 {
     public class BusConfig
     {

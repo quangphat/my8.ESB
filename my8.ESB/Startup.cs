@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using my8.ESB.Handler;
+using my8.ESB.Infrastructures;
 using my8.ESB.IRepository;
 using my8.ESB.Models;
 using my8.ESB.Repository;
@@ -27,58 +28,6 @@ namespace my8.ESB
         {
             Configuration = configuration;
         }
-        //public IServiceProvider ConfigureServices(IServiceCollection services)
-        //{
-        //    services.AddMvc();
-
-        //    //By connecting here we are making sure that our service
-        //    //cannot start until redis is ready. This might slow down startup,
-        //    //but given that there is a delay on resolving the ip address
-        //    //and then creating the connection it seems reasonable to move
-        //    //that cost to startup instead of having the first request pay the
-        //    //penalty.
-        //    //services.AddSingleton(sp =>
-        //    //{
-        //    //    var configuration = new ConfigurationOptions {ResolveDns = true};
-        //    //    configuration.EndPoints.Add(Configuration["RedisHost"]);
-        //    //    return ConnectionMultiplexer.Connect(configuration);
-        //    //});
-
-        //    //services.AddTransient<IIdentityRepository, IdentityRepository>();
-        //    var builder = new ContainerBuilder();
-
-        //    // register a specific consumer
-        //    builder.RegisterType<ApplicantAppliedEventConsumer>();
-
-        //    builder.Register(context =>
-        //    {
-        //        var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
-        //        {
-        //            var host = cfg.Host(new Uri("rabbitmq://localhost/"), h =>
-        //            {
-        //                h.Username("quangphat");
-        //                h.Password("number8");
-        //            });
-        //            //cfg.Durable = false;
-        //            //cfg.AutoDelete = true;
-        //            // https://stackoverflow.com/questions/39573721/disable-round-robin-pattern-and-use-fanout-on-masstransit
-        //            cfg.ReceiveEndpoint(host, "test_queue", e =>
-        //            {
-        //                //e.LoadFrom(context);
-        //                e.Consumer<ApplicantAppliedEventConsumer>();
-        //            });
-        //        });
-
-        //        return busControl;
-        //    })
-        //        .SingleInstance()
-        //        .As<IBusControl>()
-        //        .As<IBus>();
-
-        //    builder.Populate(services);
-        //    ApplicationContainer = builder.Build();
-        //    return new AutofacServiceProvider(ApplicationContainer);
-        //}
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<MongoConnection>(Configuration.GetSection("MongoConnection"));
@@ -86,7 +35,6 @@ namespace my8.ESB
 
             services.AddSingleton<IRecommendedTagRepository, RecommendedTagRepository>();
             services.AddScoped<CommentHandler>();
-            services.AddScoped<JobHandler>();
             services.AddScoped<RecommendedTagHandler>();
             services.AddSingleton<IBusControl>(u =>
             {
@@ -98,7 +46,7 @@ namespace my8.ESB
             services.AddMassTransit(opt =>
             {
                 opt.AddConsumer<CommentHandler>();
-                opt.AddConsumer<JobHandler>();
+
             });
 
             services.AddSingleton<IHostedService, BusService>();
@@ -110,18 +58,11 @@ namespace my8.ESB
             {
                 case "comment_queue":
                     handler.Consumer<CommentHandler>(provider);
-                    //EndpointConvention.Map<DoSomething>(handler.InputAddress);
-                    break;
-                case "job_queue":
-                    handler.Consumer<JobHandler>(provider);
-                    //EndpointConvention.Map<DoSomething>(handler.InputAddress);
                     break;
                 case "recommendedtag_queue":
                     handler.Consumer<RecommendedTagHandler>(provider);
-                    //EndpointConvention.Map<DoSomething>(handler.InputAddress);
                     break;
                 default:
-                    //handler.Consumer<CommentHandler>(provider);
                     break;
             }
         }
@@ -133,10 +74,6 @@ namespace my8.ESB
             {
                 app.UseDeveloperExceptionPage();
             }
-            //app.UseMvc();
-            //var bus = ApplicationContainer.Resolve<IBusControl>();
-            //var busHandle = TaskUtil.Await(() => bus.StartAsync());
-            //lifetime.ApplicationStopping.Register(() => busHandle.Stop());
         }
 
     }
@@ -158,9 +95,5 @@ namespace my8.ESB
         {
             return _busControl.StopAsync(cancellationToken);
         }
-    }
-    public class YourMessage
-    {
-        public string Text { get; set; }
     }
 }
