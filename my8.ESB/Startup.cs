@@ -32,10 +32,12 @@ namespace my8.ESB
         {
             services.Configure<MongoConnection>(Configuration.GetSection("MongoConnection"));
             services.Configure<BusConfig>(Configuration.GetSection("Bus"));
-
+            MapConfigs.Config(services);
             services.AddSingleton<IRecommendedTagRepository, RecommendedTagRepository>();
+            services.AddSingleton<ISearchModelRepository, SearchModelRepository>();
             services.AddScoped<CommentHandler>();
             services.AddScoped<RecommendedTagHandler>();
+            services.AddScoped<SearchModelHandler>();
             services.AddSingleton<IBusControl>(u =>
             {
                 var config = u.GetService<IOptions<BusConfig>>().Value;
@@ -61,6 +63,9 @@ namespace my8.ESB
                     break;
                 case "recommendedtag_queue":
                     handler.Consumer<RecommendedTagHandler>(provider);
+                    break;
+                case "search_model":
+                    handler.Consumer<SearchModelHandler>(provider);
                     break;
                 default:
                     break;
