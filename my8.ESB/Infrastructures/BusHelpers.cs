@@ -11,9 +11,9 @@ namespace my8.ESB.Infrastructures
     public static class BusHelpers
     {
         public static IBusControl CreateUsingRabbitMq(
-     this IBusFactorySelector factory,
-     BusConfig config,
-     Action<string, IRabbitMqReceiveEndpointConfigurator> handler = null)
+                                    this IBusFactorySelector factory,
+                                    BusConfig config,
+                                    Action<string, IRabbitMqReceiveEndpointConfigurator> handler = null)
         {
             return BusFactoryConfiguratorExtensions.CreateUsingRabbitMq(Bus.Factory, (Action<IRabbitMqBusFactoryConfigurator>)(sbc =>
             {
@@ -29,8 +29,9 @@ namespace my8.ESB.Infrastructures
                         BusConfigHandler handlerConfig = handler1;
                         sbc.ReceiveEndpoint(irabbitMqHost, handlerConfig.Queue, (Action<IRabbitMqReceiveEndpointConfigurator>)(ep =>
                         {
-                            ((IQueueEndpointConfigurator)ep).PrefetchCount =(ushort)handlerConfig.Concurency;
+                            ((IQueueEndpointConfigurator)ep).PrefetchCount = (ushort)handlerConfig.Concurency;
                             handler(handlerConfig.Queue, ep);
+                            
                         }));
                     }
                 }

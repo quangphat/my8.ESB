@@ -38,7 +38,7 @@ namespace my8.ESB
             services.AddScoped<CommentHandler>();
             services.AddScoped<RecommendedTagHandler>();
             services.AddScoped<SearchModelHandler>();
-            services.AddSingleton<IBusControl>(u =>
+            services.AddSingleton(u =>
             {
                 var config = u.GetService<IOptions<BusConfig>>().Value;
                 return Bus.Factory.CreateUsingRabbitMq(
