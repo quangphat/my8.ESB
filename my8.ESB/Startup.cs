@@ -16,6 +16,8 @@ using my8.ESB.IRepository;
 using my8.ESB.Models;
 using my8.ESB.Repository;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,8 +30,40 @@ namespace my8.ESB
         {
             Configuration = configuration;
         }
+        public class Student : NumberForCompare
+        {
+            public int Id { get; set; }
+            public int Age { get; set; }
+        }
+
+        public class NumberForCompare
+        {
+            public float Score { get; set; }
+        }
+
+        public class StudentScoreComparer : IComparer<NumberForCompare>
+        {
+            public int Compare(NumberForCompare x, NumberForCompare y)
+            {
+                return x.Score > y.Score ? 1 : 0;
+            }
+        }
+
+        public class AgeComparer : IComparer<Student>
+        {
+            public int Compare(Student x, Student y)
+            {
+                return x.Age > y.Age ? 1 : 0;
+            }
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
+            var list = new List<Student>();
+
+            list.Select(a => a.Score);
+            list.Sort(new AgeComparer());
+
             services.Configure<MongoConnection>(Configuration.GetSection("MongoConnection"));
             services.Configure<BusConfig>(Configuration.GetSection("Bus"));
             MapConfigs.Config(services);
@@ -45,13 +79,13 @@ namespace my8.ESB
                             config,
                             (queue, handler) => handlerConfig(queue, u, handler));
             });
-            services.AddMassTransit(opt =>
-            {
-                opt.AddConsumer<CommentHandler>();
+            //services.AddMassTransit(opt =>
+            //{
+            //    opt.AddConsumer<CommentHandler>();
 
-            });
+            //});
 
-            services.AddSingleton<IHostedService, BusService>();
+            //services.AddSingleton<IHostedService, BusService>();
         }
 
         private void handlerConfig(string queue, IServiceProvider provider, MassTransit.RabbitMqTransport.IRabbitMqReceiveEndpointConfigurator handler)

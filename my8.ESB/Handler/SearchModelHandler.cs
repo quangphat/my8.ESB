@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using my8.ESB.IRepository;
 using my8.ESB.Models;
-using my8.ShareObject.ESB;
+using my8.ESB.Object;
 using System;
 using System.Collections.Generic;
 using System.Linq;

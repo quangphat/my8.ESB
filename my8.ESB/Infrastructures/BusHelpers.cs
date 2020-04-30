@@ -30,6 +30,7 @@ namespace my8.ESB.Infrastructures
                         sbc.ReceiveEndpoint(irabbitMqHost, handlerConfig.Queue, (Action<IRabbitMqReceiveEndpointConfigurator>)(ep =>
                         {
                             ((IQueueEndpointConfigurator)ep).PrefetchCount = (ushort)handlerConfig.Concurency;
+                         
                             handler(handlerConfig.Queue, ep);
                             
                         }));
